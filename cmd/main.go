@@ -8,9 +8,12 @@ import (
 
 func main() {
 	uiHandler := &ui.Handler{}
+	uiRouter := uiHandler.RegisterRoutes()
 
-	http.HandleFunc("/", uiHandler.Home)
+	router := http.NewServeMux()
+	router.HandleFunc("/", uiHandler.RedirectToUI)
+	router.Handle("/ui/", http.StripPrefix("/ui", uiRouter))
 
 	slog.Info("Starting server on :8080")
-	http.ListenAndServe(":8080", nil)
+	http.ListenAndServe(":8080", router)
 }
